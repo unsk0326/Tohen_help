@@ -10,7 +10,7 @@ class ClipboardListener : Form
 
     public static string GetClipboardTextFast()
     {
-        clipboardEvent.WaitOne(); // Đợi clipboard cập nhật
+        clipboardEvent.WaitOne(); // Wait for clipboard update
         return clipboardText;
     }
 
@@ -20,7 +20,7 @@ class ClipboardListener : Form
         if (m.Msg == WM_CLIPBOARDUPDATE)
         {
             clipboardText = GetTextFromClipboard();
-            clipboardEvent.Set(); // Báo hiệu clipboard đã cập nhật
+            clipboardEvent.Set(); // Signal that clipboard has been updated
         }
         base.WndProc(ref m);
     }

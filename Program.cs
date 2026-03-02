@@ -23,7 +23,7 @@ class Program
         IntPtr hWnd = POEhwd.FindWindow(null, "Path of Exile");
         if (hWnd == IntPtr.Zero)
         {
-            Form1.BoxWrite("KHONG TIM THAY CUA SO GAME!");
+            Form1.BoxWrite("GAME WINDOW NOT FOUND!");
             return;
         }
 
@@ -41,23 +41,23 @@ class Program
             if (!Check.IsOpen("DM_Tujen_2.tujenface.png")) // is tujen open
             {
                 KeyStop.PressSTwice();
-                // Tìm Tujen cho đến khi có vị trí hợp lệ
+                // Find Tujen until valid position found
                 Point? TujenPos;
 
                 do
                 {
                     TujenPos = Check.FindImage("DM_Tujen_2.tujenname.png");
-                    Thread.Sleep(200); // Tránh spam CPU
+                    Thread.Sleep(200); // Avoid CPU spam
                 } while (TujenPos == null);
 
-                // Di chuyển đến Tujen và click
+                // Move to Tujen and click
                 KeyStop.SetCursorPos(TujenPos.Value.X, TujenPos.Value.Y);
                 Thread.Sleep(50);
                 KeyStop.LClick(100);
                 KeyStop.SetCursorPos(TujenPos.Value.X-500, TujenPos.Value.Y-500);
                 //KeyStop.SetCursorPos(0, 0);
 
-                // Chờ Tujen mở với thời gian tối đa 5 giây
+                // Wait for Tujen to open (max timeout)
                 int waitTime = 0;
                 while (!Check.IsOpen("DM_Tujen_2.tujenface.png") && waitTime < 2000)
                 {
@@ -81,7 +81,7 @@ class Program
                     KeyStop.PressSTwice();
                     stashPos = Check.FindImage("DM_Tujen_2.stash.png");
                     waitTime += 100;
-                    Thread.Sleep(100); // Chờ một chút trước khi thử lại
+                    Thread.Sleep(100); // Wait a bit before retrying
                 } while (stashPos == null && waitTime <= 500);
 
                 if (stashPos == null)
@@ -97,32 +97,32 @@ class Program
                 Thread.Sleep(50);
                 KeyStop.LClick(100);
                 KeyStop.SetCursorPos(stashPos.Value.X-500, stashPos.Value.Y-500);
-                //Console.WriteLine("Đã click vào stash.");
+                //Console.WriteLine("Clicked on stash.");
 
-                // Chờ stash mở hoàn toàn
+                // Wait for stash to fully open
                 waitTime = 0;
-                while (!Check.IsOpen("DM_Tujen_2.stashface.png") && waitTime < 2000) // Chờ tối đa 5 giây
+                while (!Check.IsOpen("DM_Tujen_2.stashface.png") && waitTime < 2000) // Max wait 2 seconds
                 {
                     Thread.Sleep(250);
                     waitTime += 250;
-                    //Console.WriteLine("Đang chờ stash mở...");
+                    //Console.WriteLine("Waiting for stash to open...");
                 }
 
-                //Console.WriteLine("Stash đã mở!");
+                //Console.WriteLine("Stash is open!");
 
-                // Di chuyển từng item vào stash
+                // Move each item into stash
                 foreach (var pos in inventoryCount)
                 {
                     if (KeyStop.stopRequested) break;
                     if (Check.IsOpen("DM_Tujen_2.stashface.png"))
                     {
-                        // Đợi 100ms giữa các lần click
+                        // Wait between clicks
                         KeyStop.SetCursorPos(pos.X, pos.Y);
                         Thread.Sleep(20);
                         KeyStop.LClick(50);
                     }
                     else break;
-                    //Console.WriteLine($"Di chuyển item tại {pos.X}, {pos.Y} vào stash.");
+                    //Console.WriteLine($"Moved item at {pos.X}, {pos.Y} to stash.");
                 }
                 KeyStop.PressSTwice();
             }
@@ -144,7 +144,7 @@ class Program
 
                     string itemData = ClipboardRead.GetClipboardTextUltraFast();
 
-                    // 🔥 Lọc thông tin item từ Clipboard
+                    // Extract item info from Clipboard
                     ItemDetails item = ClipboardRead.ExtractBasicItemDetails(itemData);
                     //stopwatch.Stop();
                     if (item.IsGem)
@@ -161,13 +161,13 @@ class Program
                     if ((item.ItemClass == "Skill Gems" || item.ItemClass == "Support Gems") &&
                                             item.GemLevel == "21" && item.GemQuality == "20" && Form1.Instance.checkBox1.Checked)
                     {
-                        //Console.WriteLine("Gem 21/20, mua ngay!");
+                        //Console.WriteLine("Gem 21/20, buying now!");
                         Logger.WriteLog(" -> BUY");
                         KeyStop.BuyItem();
                     }
                     else if (Check.IsItemWhitelisted(item.ItemName))
                     {
-                        //Console.WriteLine("Gem trong whitelist, mua ngay!");
+                        //Console.WriteLine("Item in whitelist, buying now!");
                         Logger.WriteLog(" -> BUY");
                         KeyStop.BuyItem();
                     };

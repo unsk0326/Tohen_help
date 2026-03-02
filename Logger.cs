@@ -9,13 +9,13 @@ private static readonly string logPath = $"{logDir}/log_{DateTime.Now:yyyy-MM-dd
 
 public static void WriteLog(string message)
 {
-    // Tạo thư mục logs nếu chưa tồn tại
+    // Create logs directory if it doesn't exist
     if (!Directory.Exists(logDir))
     {
         Directory.CreateDirectory(logDir);
     }
 
-    // Ghi log vào file log.txt
+    // Write log to file
     string logMessage = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {message}\n";
     File.AppendAllText(logPath, logMessage);
 }

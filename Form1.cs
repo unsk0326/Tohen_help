@@ -30,10 +30,10 @@ namespace DM_Tujen
         public Form1()
         {
             InitializeComponent();
-            Instance = this; // Lưu instance của Form1 để gọi từ static method
-            TrackBarValue = trackBar1.Value; // Gán giá trị ban đầu
-            // Tạo Timer
-            timer1.Interval = 1000; // Cập nhật mỗi giây
+            Instance = this; // Save Form1 instance for static method access
+            TrackBarValue = trackBar1.Value; // Set initial value
+            // Create Timer
+            timer1.Interval = 1000; // Update every second
             timer1.Tick += timer1_Tick;
         }
 
@@ -49,14 +49,14 @@ namespace DM_Tujen
             if (!string.IsNullOrEmpty(item) && !Whitelist.list.Contains(item))
             {
                 Whitelist.list.Add(item);
-                Whitelist.SaveToFile(); // 🔥 Lưu danh sách vào file ngay lập tức
-                UpdateListBox(); // Cập nhật ListBox
+                Whitelist.SaveToFile(); // Save list to file immediately
+                UpdateListBox(); // Refresh ListBox
                 textBox1.Clear();
             }
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            // Đăng ký phím V (Virtual-Key: 0x56)
+            // Register V key hotkey (Virtual-Key: 0x56)
             KeyStop.RegisterHotKey(IntPtr.Zero, 1, KeyStop.MOD_NOREPEAT, 0x56);
 
             KeyStop.stopRequested = false;
@@ -65,12 +65,12 @@ namespace DM_Tujen
 
             hotkeyThread = new Thread(KeyStop.HotKeyListener);
             hotkeyThread.IsBackground = true;
-            hotkeyThread.Start(); // Chạy luồng lắng nghe phím V
+            hotkeyThread.Start(); // Start V key listener thread
 
-            startTime = DateTime.Now; // Lưu thời gian bắt đầu
-            timer1.Start(); // Bắt đầu bộ đếm thời gian
+            startTime = DateTime.Now; // Save start time
+            timer1.Start(); // Start the timer
 
-            // Tạo luồng chính
+            // Create main thread
             mainThread = new Thread(Program.MainLoop);
             mainThread.Start();
         }
@@ -78,8 +78,8 @@ namespace DM_Tujen
         private void Form1_Load(object sender, EventArgs e)
         {
 
-            Whitelist.LoadFromFile(); // Tải dữ liệu từ file
-            listBox1.Items.AddRange(Whitelist.list.ToArray()); // Cập nhật ListBox
+            Whitelist.LoadFromFile(); // Load data from file
+            listBox1.Items.AddRange(Whitelist.list.ToArray()); // Populate ListBox
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -89,22 +89,22 @@ namespace DM_Tujen
 
         private void listBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete) // Kiểm tra xem có nhấn phím Delete không
+            if (e.KeyCode == Keys.Delete) // Check if Delete key was pressed
             {
-                if (listBox1.SelectedItem != null) // Kiểm tra xem có item nào được chọn không
+                if (listBox1.SelectedItem != null) // Check if an item is selected
                 {
-                    Whitelist.list.Remove(listBox1.SelectedItem.ToString()); // Xóa item khỏi danh sách
-                    listBox1.Items.Remove(listBox1.SelectedItem); // Xóa item được chọn
-                    Whitelist.SaveToFile(); // 🔥 Lưu danh sách vào file ngay lập tức
-                    UpdateListBox(); // Cập nhật ListBox
+                    Whitelist.list.Remove(listBox1.SelectedItem.ToString()); // Remove item from list
+                    listBox1.Items.Remove(listBox1.SelectedItem); // Remove selected item
+                    Whitelist.SaveToFile(); // Save list to file immediately
+                    UpdateListBox(); // Refresh ListBox
                 }
             }
         }
 
         private void UpdateListBox()
         {
-            listBox1.Items.Clear(); // Xóa toàn bộ danh sách cũ
-            listBox1.Items.AddRange(Whitelist.list.ToArray()); // Cập nhật lại danh sách từ HashSet
+            listBox1.Items.Clear(); // Clear the entire old list
+            listBox1.Items.AddRange(Whitelist.list.ToArray()); // Refresh list from HashSet
         }
 
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -119,7 +119,7 @@ namespace DM_Tujen
                 Instance.listBox2.Invoke(new Action(() =>
                 {
                     Instance.listBox2.Items.Add(message);
-                    Instance.listBox2.TopIndex = Instance.listBox2.Items.Count - 1; // ✅ Đảm bảo cuộn xuống
+                    Instance.listBox2.TopIndex = Instance.listBox2.Items.Count - 1; // Ensure scroll to bottom
                 }));
             }
 

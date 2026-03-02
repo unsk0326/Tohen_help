@@ -21,37 +21,37 @@ public class Check
 
     public static System.Drawing.Point? FindImage(string imagePath, double threshold = 0.8)
     {
-        //string resourceName = "DM_Tujen_2.tujenname.png"; // Ảnh mẫu cần tìm
-        int width = 1280, height = 800;     // Kích thước vùng tìm kiếm
+        //string resourceName = "DM_Tujen_2.tujenname.png"; // Template image to find
+        int width = 1280, height = 800;     // Search area size
 
-        // Xác định vùng cần chụp (bắt đầu từ góc trên bên trái màn hình)
+        // Define capture region (starting from top-left corner of screen)
         Rectangle captureRegion = new Rectangle(0, 0, width, height);
 
-        // Chụp ảnh khu vực màn hình
+        // Capture screen region
         Bitmap screenshot = CaptureRegion(captureRegion);
-        using Mat screenMat = BitmapConverter.ToMat(screenshot); // Chuyển Bitmap thành Mat
+        using Mat screenMat = BitmapConverter.ToMat(screenshot); // Convert Bitmap to Mat
 
-        // Đọc ảnh từ file nhúng trong resource
+        // Read image from embedded resource
         Assembly assembly = Assembly.GetExecutingAssembly();
         using Stream? stream = assembly.GetManifestResourceStream(imagePath);
-        if (stream == null) return null; // Nếu không tìm thấy tài nguyên, trả về false
+        if (stream == null) return null; // Resource not found, return null
         using Bitmap templateBitmap = new Bitmap(stream);
-        using Mat template = BitmapConverter.ToMat(templateBitmap); // Chuyển Bitmap thành Mat
+        using Mat template = BitmapConverter.ToMat(templateBitmap); // Convert Bitmap to Mat
 
-        // Chuyển ảnh màn hình về grayscale nếu chưa phải
+        // Convert screen image to grayscale if not already
         using Mat grayScreen = new Mat();
         Cv2.CvtColor(screenMat, grayScreen, ColorConversionCodes.BGR2GRAY);
         using Mat grayTemplate = new Mat();
         Cv2.CvtColor(template, grayTemplate, ColorConversionCodes.BGR2GRAY);
 
-        // Thực hiện Template Matching
+        // Perform Template Matching
         using Mat result = new Mat();
         Cv2.MatchTemplate(grayScreen, grayTemplate, result, TemplateMatchModes.CCoeffNormed);
 
-        // Tìm vị trí có độ khớp cao nhất
+        // Find the position with highest match
         Cv2.MinMaxLoc(result, out _, out double maxVal, out _, out OpenCvSharp.Point maxLoc);
 
-        // Nếu độ chính xác cao hơn ngưỡng threshold, trả về tọa độ trung tâm ảnh tìm thấy
+        // If accuracy is above threshold, return center coordinates of found image
         if (maxVal >= threshold)
         {
             int centerX = maxLoc.X + template.Width / 2;
@@ -59,50 +59,50 @@ public class Check
             return new System.Drawing.Point(centerX, centerY);
         }
 
-        return null; // Không tìm thấy hình ảnh
+        return null; // Image not found
     }
-    
+
 
     public static bool IsOpen(string templatePath, double threshold = 0.8)
     {
-        //string templatePath = "DM_Tujen_2.tujenface.png"; // Ảnh mẫu cần tìm
-        int width = 1280, height = 800;     // Kích thước vùng tìm kiếm
+        //string templatePath = "DM_Tujen_2.tujenface.png"; // Template image to find
+        int width = 1280, height = 800;     // Search area size
 
-        // Xác định vùng cần chụp (bắt đầu từ góc trên bên trái màn hình)
+        // Define capture region (starting from top-left corner of screen)
         Rectangle captureRegion = new Rectangle(0, 0, width, height);
 
-        // Chụp ảnh khu vực màn hình
+        // Capture screen region
         Bitmap screenshot = CaptureRegion(captureRegion);
-        using Mat screenMat = BitmapConverter.ToMat(screenshot); // Chuyển Bitmap thành Mat
-        //using Mat template = Cv2.ImRead(templatePath, ImreadModes.Grayscale); // Đọc ảnh mẫu dạng grayscale     
+        using Mat screenMat = BitmapConverter.ToMat(screenshot); // Convert Bitmap to Mat
+        //using Mat template = Cv2.ImRead(templatePath, ImreadModes.Grayscale); // Read template as grayscale
 
-        // Đọc ảnh từ file nhúng trong resource
+        // Read image from embedded resource
         Assembly assembly = Assembly.GetExecutingAssembly();
         using Stream? stream = assembly.GetManifestResourceStream(templatePath);
-        if (stream == null) return false; // Nếu không tìm thấy tài nguyên, trả về false
+        if (stream == null) return false; // Resource not found, return false
         using Bitmap templateBitmap = new Bitmap(stream);
-        using Mat template = BitmapConverter.ToMat(templateBitmap); // Chuyển Bitmap thành Mat
+        using Mat template = BitmapConverter.ToMat(templateBitmap); // Convert Bitmap to Mat
 
-        // Chuyển ảnh màn hình về grayscale nếu chưa phải
+        // Convert screen image to grayscale if not already
         using Mat grayScreen = new Mat();
         Cv2.CvtColor(screenMat, grayScreen, ColorConversionCodes.BGR2GRAY);
         using Mat grayTemplate = new Mat();
         Cv2.CvtColor(template, grayTemplate, ColorConversionCodes.BGR2GRAY);
 
 
-        // Thực hiện Template Matching
+        // Perform Template Matching
         using Mat result = new Mat();
         Cv2.MatchTemplate(grayScreen, grayTemplate, result, TemplateMatchModes.CCoeffNormed);
 
-        // Tìm vị trí có độ khớp cao nhất
+        // Find the position with highest match
         Cv2.MinMaxLoc(result, out _, out double maxVal, out _, out OpenCvSharp.Point maxLoc);
 
-        // Nếu độ chính xác cao hơn ngưỡng threshold, trả về tọa độ trung tâm ảnh tìm thấy
+        // If accuracy is above threshold, return true
         if (maxVal >= threshold)
         {
             return true;
         }
-        return false; // Không tìm thấy hình ảnh
+        return false; // Image not found
     }
 
     public static Span<System.Drawing.Point> Inventory3()
@@ -121,11 +121,11 @@ public class Check
 
         int stride = bmpData.Stride;
         int bytes = stride * screenshot.Height;
-        byte[] pixelData = ArrayPool<byte>.Shared.Rent(bytes); // 🔥 Dùng ArrayPool để tránh cấp phát mới
+        byte[] pixelData = ArrayPool<byte>.Shared.Rent(bytes); // Use ArrayPool to avoid new allocation
         Marshal.Copy(bmpData.Scan0, pixelData, 0, bytes);
         screenshot.UnlockBits(bmpData);
 
-        // 🔥 Dùng ArrayPool để tránh cấp phát List<>
+        // Use ArrayPool to avoid List<> allocation
         System.Drawing.Point[] itemBuffer = ArrayPool<System.Drawing.Point>.Shared.Rent(rows * cols);
         int itemCount = 0;
 
@@ -146,13 +146,13 @@ public class Check
             }
         });
 
-        ArrayPool<byte>.Shared.Return(pixelData); // Trả bộ nhớ về pool
+        ArrayPool<byte>.Shared.Return(pixelData); // Return memory to pool
 
-        // 🔥 Sắp xếp từ trên xuống dưới, từ trái qua phải
+        // Sort top-to-bottom, left-to-right
         Array.Sort(itemBuffer, 0, itemCount, Comparer<System.Drawing.Point>.Create((p1, p2) =>
         {
-            int cmpX = p1.X.CompareTo(p2.X); // So sánh hàng trước
-            return cmpX != 0 ? cmpX : p1.Y.CompareTo(p2.Y); // Nếu cùng hàng, so sánh cột
+            int cmpX = p1.X.CompareTo(p2.X); // Compare row first
+            return cmpX != 0 ? cmpX : p1.Y.CompareTo(p2.Y); // If same row, compare column
         }));
 
         return new Span<System.Drawing.Point>(itemBuffer, 0, itemCount);
@@ -160,20 +160,20 @@ public class Check
 
     public static List<System.Drawing.Point> TujenItemPos()
     {
-        // Kích thước kho đồ
-        int cols = 2, rows = 11; // 12x5 = 60 ô
-        int slotWidth = 37, slotHeight = 37; // Mỗi ô là 37x37 pixel
-        int startX = 183, startY = 216; // Vị trí góc trên bên trái kho đồ trên màn hình
+        // Inventory size
+        int cols = 2, rows = 11; // 2x11 slots
+        int slotWidth = 37, slotHeight = 37; // Each slot is 37x37 pixels
+        int startX = 183, startY = 216; // Top-left corner of inventory on screen
 
-        // Màu nền để so sánh (thay đổi nếu khác)
-        Color backgroundColor = Color.FromArgb(4, 6, 6); // Ví dụ màu nền
+        // Background color for comparison
+        Color backgroundColor = Color.FromArgb(4, 6, 6); // Background color
 
-        // Chụp ảnh kho đồ
+        // Capture inventory screenshot
         using Bitmap screenshot = new Bitmap(cols * slotWidth, rows * slotHeight);
         using Graphics g = Graphics.FromImage(screenshot);
         g.CopyFromScreen(startX, startY, 0, 0, screenshot.Size);
 
-        // Dùng LockBits để truy cập pixel nhanh hơn
+        // Use LockBits for faster pixel access
         BitmapData bmpData = screenshot.LockBits(new Rectangle(0, 0, screenshot.Width, screenshot.Height),
                                                  ImageLockMode.ReadOnly,
                                                  PixelFormat.Format24bppRgb);
@@ -185,25 +185,25 @@ public class Check
         screenshot.UnlockBits(bmpData);
 
 
-        // Danh sách tọa độ trên màn hình của các ô chứa item
+        // List of screen coordinates of slots containing items
         List<System.Drawing.Point> itemPositions = new List<System.Drawing.Point>();
 
-        // ✅ Dùng `Parallel.For` để kiểm tra đa luồng
+        // Use Parallel.For for multi-threaded checking
         Parallel.For(0, rows, row =>
         {
             for (int col = 0; col < cols; col++)
             {
-                int centerX = startX + col * slotWidth + slotWidth / 2; // Vị trí X trên màn hình
-                int centerY = startY + row * slotHeight + slotHeight / 2; // Vị trí Y trên màn hình
+                int centerX = startX + col * slotWidth + slotWidth / 2; // Screen X position
+                int centerY = startY + row * slotHeight + slotHeight / 2; // Screen Y position
                 Color pixelColor = GetPixelFast(pixelData, (col * slotWidth) + slotWidth / 2,
                                                          (row * slotHeight) + slotHeight / 2, stride);
 
-                // Nếu màu không giống nền, nghĩa là có item
+                // If color doesn't match background, there's an item
                 if (!IsSameColor(pixelColor, backgroundColor))
                 {
-                    lock (itemPositions) // Đảm bảo thread an toàn
+                    lock (itemPositions) // Ensure thread safety
                     {
-                        itemPositions.Add(new System.Drawing.Point(centerX, centerY)); // Lưu tọa độ trên màn hình
+                        itemPositions.Add(new System.Drawing.Point(centerX, centerY)); // Save screen coordinates
                     }
                 }
             }
@@ -296,14 +296,14 @@ public class Check
         return Color.FromArgb(r, g, b);
     }
 
-    // 🛠 Lấy màu từ byte array của Bitmap
+    // Get color from Bitmap byte array
     static Color GetPixelFast(byte[] pixelData, int x, int y, int stride)
     {
         int index = (y * stride) + (x * 3);
         return Color.FromArgb(pixelData[index + 2], pixelData[index + 1], pixelData[index]);
     }
 
-    // 🔍 So sánh màu có giống nhau không (cho phép sai số nhỏ)
+    // Compare if two colors are similar (with small tolerance)
     static bool IsSameColor(Color a, Color b, int tolerance = 10)
     {
         return Math.Abs(a.R - b.R) < tolerance &&

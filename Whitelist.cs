@@ -3,10 +3,10 @@ using System.Text.Json;
 
 public class Whitelist
 {
-    private static readonly string filePath = "whitelist.json"; // Lưu danh sách vào file JSON
+    private static readonly string filePath = "whitelist.json"; // Save list to JSON file
     public static HashSet<string> list = new HashSet<string>();
 
-    // Tải danh sách từ file khi chương trình khởi động
+    // Load list from file on program startup
     public static void LoadFromFile()
     {
         if (File.Exists(filePath))
@@ -16,7 +16,7 @@ public class Whitelist
         }
     }
 
-    // Lưu danh sách vào file khi có thay đổi
+    // Save list to file when changed
     public static void SaveToFile()
     {
         string json = JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });

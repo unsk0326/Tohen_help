@@ -51,7 +51,7 @@
             buttonQuay.Name = "buttonQuay";
             buttonQuay.Size = new Size(136, 51);
             buttonQuay.TabIndex = 0;
-            buttonQuay.Text = "Bắt Đầu";
+            buttonQuay.Text = "Start";
             buttonQuay.UseVisualStyleBackColor = true;
             buttonQuay.Click += button1_Click;
             // 
@@ -98,7 +98,7 @@
             label1.Name = "label1";
             label1.Size = new Size(98, 15);
             label1.TabIndex = 4;
-            label1.Text = "ấn nút V để dừng";
+            label1.Text = "Press V to stop";
             // 
             // listBox2
             // 

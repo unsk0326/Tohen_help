@@ -4,14 +4,14 @@ using DM_Tujen;
 
 public class KeyStop
 {
-    private const byte VK_S = 0x53; // Mã phím S
+    private const byte VK_S = 0x53; // S key code
     public static volatile bool stopRequested = false;
     public const byte VK_CONTROL = 0x11;
     private const uint KEYEVENTF_KEYUP = 0x0002;
     public const int MOD_NOREPEAT = 0x4000;
     private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
     private const uint MOUSEEVENTF_LEFTUP = 0x0004;
-    private const byte VK_C = 0x43; // Mã phím 'C'
+    private const byte VK_C = 0x43; // C key code
     private const uint MOUSEEVENTF_WHEEL = 0x0800;
     private Form1 mainForm;
 
@@ -34,7 +34,7 @@ public class KeyStop
     {
         while (!stopRequested)
         {
-            if (GetAsyncKeyState(0x56) < 0) // 0x56 là phím 'V'
+            if (GetAsyncKeyState(0x56) < 0) // 0x56 is V key
             {
                 stopAndCtrlUp();
             }
@@ -50,13 +50,13 @@ public class KeyStop
         keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
     }
 
-    // Hàm cuộn chuột xuống `times` lần
+    // Scroll mouse down `times` times
     public static void ScrollMouseDownMultiple( int times)
     {
         for (int i = 0; i < times; i++)
         {
-            ScrollMouseDown(120); // Gửi sự kiện cuộn chuột xuống
-            Thread.Sleep(5); // Delay nhỏ để cuộn mượt hơn
+            ScrollMouseDown(120); // Send mouse scroll down event
+            Thread.Sleep(5); // Small delay for smoother scrolling
         }
     }
 
@@ -83,10 +83,10 @@ public class KeyStop
     {
         for (int i = 0; i < 2; i++)
         {
-            keybd_event(VK_S, 0, 0, 0);          // Ấn phím S xuống
-            Thread.Sleep(100); // Chờ 50ms
-            keybd_event(VK_S, 0, KEYEVENTF_KEYUP, 0); // Nhả phím S
-            Thread.Sleep(300); // Chờ 100ms giữa 2 lần nhấn
+            keybd_event(VK_S, 0, 0, 0);          // Press S key down
+            Thread.Sleep(100); // Wait 100ms
+            keybd_event(VK_S, 0, KEYEVENTF_KEYUP, 0); // Release S key
+            Thread.Sleep(300); // Wait 300ms between presses
         }
     }
 

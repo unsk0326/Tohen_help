@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 public class POEhwd
 {
 
-    // Windows API: Tìm cửa sổ game
+    // Windows API: Find game window
     [DllImport("user32.dll", SetLastError = true)]
     public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
